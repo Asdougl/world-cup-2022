@@ -32,16 +32,18 @@ export const fetchGroupStandingsMap = async () => {
     const groupsMap: Record<string, Group> = {}
 
     Results.forEach((standing) => {
-      const key = standing.Group[0].Description
+      const key = standing.Group[0]?.Description
 
-      if (!groupsMap[key]) {
-        groupsMap[key] = {
-          IdGroup: standing.IdGroup,
-          Name: key,
-          teams: [standing],
+      if (key) {
+        if (!groupsMap[key]) {
+          groupsMap[key] = {
+            IdGroup: standing.IdGroup,
+            Name: key,
+            teams: [standing],
+          }
+        } else {
+          groupsMap[key]?.teams.push(standing)
         }
-      } else {
-        groupsMap[key].teams.push(standing)
       }
     })
 
@@ -64,11 +66,11 @@ export const fetchStandingsForGroups = async () => {
       if (!groupsMap[IdGroup]) {
         groupsMap[IdGroup] = {
           IdGroup,
-          Name: Group[0].Description,
+          Name: Group[0]?.Description || '',
           teams: [standing],
         }
       } else {
-        groupsMap[IdGroup].teams.push(standing)
+        groupsMap[IdGroup]?.teams.push(standing)
       }
     })
 
@@ -85,6 +87,7 @@ export const fetchMatches = async (stageId?: number) => {
   try {
     const queryParams = new URLSearchParams()
     queryParams.append('idSeason', SEASON_ID.toString())
+    queryParams.append('count', '500')
     if (stageId) queryParams.append('idStage', stageId.toString())
 
     const response = await fetch(
