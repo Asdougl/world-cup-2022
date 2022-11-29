@@ -10,17 +10,17 @@ export const Group = ({ group }: GroupProps) => {
     <div className="w-full">
       <h2 className="text-lg font-bold">{group.Name}</h2>
       <table className="w-full">
-        <thead className="text-left text-sm">
+        <thead className="text-left text-sm opacity-70">
           <tr className="">
             <th className="">Team</th>
-            <th className="w-[5.5%]">MP</th>
-            <th className="w-[5.5%]">W</th>
-            <th className="w-[5.5%]">D</th>
-            <th className="w-[5.5%]">L</th>
-            <th className="w-[5.5%]">GF</th>
-            <th className="w-[5.5%]">GA</th>
-            <th className="w-[5.5%]">GD</th>
-            <th className="w-[5.5%]">Pts</th>
+            <th className="w-[5.5%] text-center">MP</th>
+            <th className="w-[5.5%] text-center">W</th>
+            <th className="w-[5.5%] text-center">D</th>
+            <th className="w-[5.5%] text-center">L</th>
+            <th className="w-[5.5%] text-center">GF</th>
+            <th className="w-[5.5%] text-center">GA</th>
+            <th className="w-[5.5%] text-center">GD</th>
+            <th className="w-[5.5%] text-center">Pts</th>
           </tr>
         </thead>
         <tbody>
@@ -43,7 +43,7 @@ export const Group = ({ group }: GroupProps) => {
               <td className="text-center">{standing.For}</td>
               <td className="text-center">{standing.Against}</td>
               <td className="text-center">{standing.GoalsDiference}</td>
-              <td className="text-center">{standing.Points}</td>
+              <td className="text-center font-bold">{standing.Points}</td>
             </tr>
           ))}
         </tbody>

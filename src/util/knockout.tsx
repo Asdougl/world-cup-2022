@@ -6,7 +6,7 @@ export const parsePlaceholder = (
 ) => {
   const match = placeholder.match(/(1|2)([A-Z])/)
   if (match) {
-    const [, place, group] = match
+    const [, place = '', group = ''] = match
 
     const message = `${place === '1' ? '1st' : '2nd'} Group ${group}`
 
@@ -18,13 +18,15 @@ export const parsePlaceholder = (
       if (groupData) {
         const team = groupData.teams[parseInt(place) - 1]
 
-        return (
+        return team ? (
           <div className="flex items-center gap-2">
             <span>{message}</span>
             <span className="text-sm opacity-70">
               {team.Team.ShortClubName}
             </span>
           </div>
+        ) : (
+          message
         )
       }
     }

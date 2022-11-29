@@ -43,7 +43,7 @@ function App() {
             <div className="text-2xl font-bold text-white">FIFA World Cup</div>
             <div className="flex items-center gap-4">
               <router.Link to="/" className="text-sm font-bold text-white">
-                Home
+                Groups
               </router.Link>
               <router.Link
                 to="/matches"
