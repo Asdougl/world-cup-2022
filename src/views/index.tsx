@@ -1,3 +1,4 @@
+import { createRouteConfig } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import { Loader } from '../components/Loader'
@@ -5,7 +6,7 @@ import { MatchCard } from '../components/MatchCard'
 import { useAllMatchesQuery } from '../hooks/matches'
 import type { PotentialMatch } from '../types/match'
 
-export const HomeView = () => {
+const HomeView = () => {
   const { data, isLoading } = useAllMatchesQuery()
 
   const { recent, upcoming, ongoing } = useMemo(() => {
@@ -39,27 +40,30 @@ export const HomeView = () => {
         <Loader />
       ) : (
         <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-4">
-            {ongoing.length > 0 && (
-              <>
-                <h2 className="text-2xl font-bold">Ongoing</h2>
-                <div className="flex flex-col gap-4">
-                  {ongoing.map((match) => (
-                    <MatchCard key={match.IdMatch} match={match} />
-                  ))}
-                </div>
-              </>
-            )}
-            <h2 className="text-2xl font-bold">Recent matches</h2>
-            <div className="grid gap-4 lg:grid-cols-2">
-              {recent.map((match) => (
-                <MatchCard key={match.IdMatch} match={match} />
-              ))}
+          {ongoing.length > 0 && (
+            <div className="flex flex-col gap-4">
+              <h2 className="text-2xl font-bold">Ongoing</h2>
+              <div className="flex flex-col gap-4">
+                {ongoing.map((match) => (
+                  <MatchCard key={match.IdMatch} match={match} />
+                ))}
+              </div>
             </div>
+          )}
 
+          <div className="flex flex-col gap-4">
             <h2 className="text-2xl font-bold">Upcoming matches</h2>
             <div className="grid gap-4 lg:grid-cols-2">
               {upcoming.map((match) => (
+                <MatchCard key={match.IdMatch} match={match} />
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h2 className="text-2xl font-bold">Recent matches</h2>
+            <div className="grid gap-4 lg:grid-cols-2">
+              {recent.map((match) => (
                 <MatchCard key={match.IdMatch} match={match} />
               ))}
             </div>
@@ -69,3 +73,8 @@ export const HomeView = () => {
     </div>
   )
 }
+
+export const indexRoute = createRouteConfig().createRoute({
+  path: '/',
+  component: HomeView,
+})

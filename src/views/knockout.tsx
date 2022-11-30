@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import Xarrow from 'react-xarrows'
+import { createRouteConfig } from '@tanstack/react-router'
 import { KnockoutMatch } from '../components/KnockoutMatch'
 import { Loader } from '../components/Loader'
 import {
@@ -10,17 +9,8 @@ import {
   useThirdMatchesQuery,
 } from '../hooks/matches'
 import { useGroupStandingsMapQuery } from '../hooks/standings'
-import type { PotentialMatch } from '../types/match'
 
-const getWinnerFrom = (placeholder: string) => {
-  const match = placeholder.match(/W([0-9]+)/)
-  if (match) {
-    return `match-${match[1]}`
-  }
-  return ''
-}
-
-export const KnockoutView = () => {
+const KnockoutView = () => {
   const { data: r16Matches, isLoading: r16loading } = useRound16MatchesQuery()
   const { data: semiMatches, isLoading: semiloading } = useSemiMatchesQuery()
   const { data: quarterMatches, isLoading: quarterLoading } =
@@ -228,3 +218,8 @@ export const KnockoutView = () => {
     </div>
   )
 }
+
+export const knockoutRoute = createRouteConfig().createRoute({
+  path: 'knockout',
+  component: KnockoutView,
+})

@@ -24,6 +24,7 @@ export const PotentialMatch = z.object({
   MatchTime: z.string().nullable(),
   MatchStatus: z.number(),
   MatchNumber: z.number(),
+  Winner: z.string().nullable(),
 })
 export type PotentialMatch = z.infer<typeof PotentialMatch>
 
@@ -41,6 +42,7 @@ export const Match = z.object({
   MatchTime: z.string().nullable(),
   MatchStatus: z.number(),
   MatchNumber: z.number(),
+  Winner: z.string(),
 })
 export type Match = z.infer<typeof Match>
 

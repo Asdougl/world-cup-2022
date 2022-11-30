@@ -10,10 +10,15 @@ import {
 
 const BASE_URL = 'https://api.fifa.com/api/v3'
 
-export const fetchStandings = async (stageId: number) => {
+export const fetchStandings = async (
+  stageId: number,
+  queryParams?: URLSearchParams
+) => {
   try {
     const response = await fetch(
-      `${BASE_URL}/calendar/${COMPETITION_ID}/${SEASON_ID}/${stageId}/Standing`
+      `${BASE_URL}/calendar/${COMPETITION_ID}/${SEASON_ID}/${stageId}/Standing${
+        queryParams ? `?${queryParams.toString()}` : ''
+      }`
     )
 
     const { Results } = StandingReply.parse(await response.json())
@@ -83,12 +88,33 @@ export const fetchStandingsForGroups = async () => {
   }
 }
 
-export const fetchMatches = async (stageId?: number) => {
+export const fetchStandingsForOneGroup = async (
+  idGroup: string
+): Promise<Group | null> => {
+  try {
+    const Results = await fetchStandings(
+      STAGE_ID,
+      new URLSearchParams({ IdGroup: idGroup })
+    )
+
+    return {
+      IdGroup: idGroup,
+      Name: Results[0]?.Group[0]?.Description || '',
+      teams: Results,
+    }
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
+export const fetchMatches = async (stageId?: number, groupId?: string) => {
   try {
     const queryParams = new URLSearchParams()
     queryParams.append('idSeason', SEASON_ID.toString())
     queryParams.append('count', '500')
     if (stageId) queryParams.append('idStage', stageId.toString())
+    if (groupId) queryParams.append('idGroup', groupId)
 
     const response = await fetch(
       `${BASE_URL}/calendar/Matches?${queryParams.toString()}`
@@ -146,6 +172,15 @@ export const fetchOngoingMatches = async (): Promise<Match[]> => {
 export const fetchRound16Matches = async () => {
   try {
     return await fetchMatches(STAGE_ROUND_OF_16_ID)
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+
+export const fetchMatchesForGroup = async (idGroup: string) => {
+  try {
+    return await fetchMatches(STAGE_ID, idGroup)
   } catch (error) {
     console.error(error)
     return []

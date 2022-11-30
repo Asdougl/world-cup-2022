@@ -1,8 +1,9 @@
-import { Group } from '../components/Group'
-import { Loader } from '../components/Loader'
-import { useGroupStandingsQuery } from '../hooks/standings'
+import { Group } from '../../components/Group'
+import { Loader } from '../../components/Loader'
+import { useGroupStandingsQuery } from '../../hooks/standings'
+import { groupsIndexRoute } from '.'
 
-export const GroupsView = () => {
+const GroupsView = () => {
   const { data, isLoading } = useGroupStandingsQuery()
 
   const half = data ? Math.ceil(data.length / 2) : 0
@@ -18,12 +19,12 @@ export const GroupsView = () => {
         <div className="flex w-full flex-col gap-8 lg:flex-row">
           <div className="flex flex-1 flex-col gap-4">
             {left.map((entry) => (
-              <Group key={entry.IdGroup} group={entry} />
+              <Group key={entry.IdGroup} group={entry} title link />
             ))}
           </div>
           <div className="flex flex-1 flex-col gap-4">
             {right.map((entry) => (
-              <Group key={entry.IdGroup} group={entry} />
+              <Group key={entry.IdGroup} group={entry} title link />
             ))}
           </div>
         </div>
@@ -31,3 +32,8 @@ export const GroupsView = () => {
     </div>
   )
 }
+
+export const groupsRoute = groupsIndexRoute.createRoute({
+  path: '/',
+  component: GroupsView,
+})

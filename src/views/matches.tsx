@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
+import { createRouteConfig } from '@tanstack/react-router'
 import { Loader } from '../components/Loader'
 import { MatchCard } from '../components/MatchCard'
 import { fetchMatches } from '../services/fifa'
 import { MATCHES_QUERY_KEY } from '../util/constants'
 import { minutes, seconds } from '../util/time'
 
-export const MatchView = () => {
+const MatchView = () => {
   const { data, isLoading } = useQuery(
     [MATCHES_QUERY_KEY],
     () => fetchMatches(),
@@ -25,3 +26,8 @@ export const MatchView = () => {
     <Loader />
   )
 }
+
+export const matchesRoute = createRouteConfig().createRoute({
+  path: 'matches',
+  component: MatchView,
+})

@@ -1,14 +1,30 @@
+import { router } from '../router'
 import type { Group as iGroup } from '../types/group'
 import { pictureUrl } from '../util/picture'
 
 interface GroupProps {
   group: iGroup
+  link?: boolean
+  title?: boolean
 }
 
-export const Group = ({ group }: GroupProps) => {
+export const Group = ({ group, link, title }: GroupProps) => {
   return (
     <div className="w-full">
-      <h2 className="text-lg font-bold">{group.Name}</h2>
+      {title && (
+        <div className="flex justify-between">
+          <h2 className="text-lg font-bold">{group.Name}</h2>
+          {link && (
+            <router.Link
+              to="/groups/$idGroup"
+              params={{ idGroup: group.IdGroup }}
+              className="text-sm opacity-70 hover:underline hover:opacity-80"
+            >
+              See More
+            </router.Link>
+          )}
+        </div>
+      )}
       <table className="w-full">
         <thead className="text-left text-sm opacity-70">
           <tr className="border-b border-slate-700">
