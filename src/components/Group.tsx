@@ -11,7 +11,7 @@ export const Group = ({ group }: GroupProps) => {
       <h2 className="text-lg font-bold">{group.Name}</h2>
       <table className="w-full">
         <thead className="text-left text-sm opacity-70">
-          <tr className="">
+          <tr className="border-b border-slate-700">
             <th className="">Team</th>
             <th className="w-[5.5%] text-center">MP</th>
             <th className="w-[5.5%] text-center">W</th>
@@ -25,16 +25,21 @@ export const Group = ({ group }: GroupProps) => {
         </thead>
         <tbody>
           {group.teams.map((standing, index) => (
-            <tr key={standing.IdTeam}>
-              <td className="flex items-center gap-1">
-                <div>{index + 1}.</div>
-                <div>
-                  <img
-                    className="h-3 rounded-sm"
-                    src={pictureUrl(standing.Team.PictureUrl, 1)}
-                  />
+            <tr
+              key={standing.IdTeam}
+              className="h-10 border-b border-slate-700 text-lg last:border-b-0"
+            >
+              <td className="">
+                <div className="flex h-full items-center gap-1">
+                  <div className="w-4 text-center">{index + 1}</div>
+                  <div>
+                    <img
+                      className="h-4 rounded-sm"
+                      src={pictureUrl(standing.Team.PictureUrl, 1)}
+                    />
+                  </div>
+                  <div className="ml-2">{standing.Team.ShortClubName}</div>
                 </div>
-                <div className="ml-2">{standing.Team.ShortClubName}</div>
               </td>
               <td className="text-center">{standing.Played}</td>
               <td className="text-center">{standing.Won}</td>

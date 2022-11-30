@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import Xarrow from 'react-xarrows'
 import type { Group } from '../types/group'
 import type { PotentialMatch } from '../types/match'
 import { parsePlaceholder } from '../util/knockout'
@@ -6,21 +7,35 @@ import { pictureUrl } from '../util/picture'
 
 interface KnockoutMatchProps {
   match: PotentialMatch
-  index: number
   groups: Record<string, Group> | undefined
+  winnerTo?: string
+  loserTo?: string
+  arrowOffset?: number
 }
 
-export const KnockoutMatch = ({ match, index, groups }: KnockoutMatchProps) => {
+export const KnockoutMatch = ({
+  match,
+  groups,
+  winnerTo,
+  loserTo,
+  arrowOffset = 0,
+}: KnockoutMatchProps) => {
   return (
-    <div key={match.IdMatch} className="flex flex-col gap-2">
-      <div className="flex items-center gap-3 px-2">
-        <span>Game {index + 1}</span>
+    <div key={match.IdMatch} className="flex min-w-[200px] flex-col gap-2">
+      <div className="flex flex-col items-start px-2 lg:flex-row lg:items-center lg:gap-3">
+        <span>Game {match.MatchNumber}</span>
         <span className="text-sm opacity-70">
           {dayjs(match.Date).format('dddd, MMM D [at] HH:mm')}
         </span>
       </div>
-      <div className="flex flex-col gap-4 rounded-lg border border-slate-600 px-4 py-2">
-        <div className="flex items-center">
+      <div
+        className="flex flex-col gap-4 rounded-lg border border-slate-600 py-2"
+        id={`match-${match.MatchNumber}`}
+      >
+        <div
+          className="flex items-center px-4"
+          id={`${match.MatchNumber}-home`}
+        >
           {match.Home ? (
             <>
               <img
@@ -38,11 +53,14 @@ export const KnockoutMatch = ({ match, index, groups }: KnockoutMatchProps) => {
               </div>
             </>
           )}
-          <div className="flex-1 text-right">
-            {match.Away ? match.Away.Score : '-'}
+          <div className="text-right">
+            {match.Away ? match.Away.Score ?? '-' : '-'}
           </div>
         </div>
-        <div className="flex items-center">
+        <div
+          className="flex items-center px-4"
+          id={`${match.MatchNumber}-away`}
+        >
           {match.Away ? (
             <>
               <img
@@ -60,10 +78,36 @@ export const KnockoutMatch = ({ match, index, groups }: KnockoutMatchProps) => {
               </div>
             </>
           )}
-          <div className="flex-1 text-right">
-            {match.Away ? match.Away.Score : '-'}
+          <div className="text-right">
+            {match.Away ? match.Away.Score ?? '-' : '-'}
           </div>
         </div>
+        {winnerTo && (
+          <Xarrow
+            start={`match-${match.MatchNumber}`}
+            end={winnerTo}
+            endAnchor="left"
+            startAnchor="right"
+            color="#475569"
+            curveness={0.5}
+            path="grid"
+            _cpx1Offset={arrowOffset * 6}
+            _cpx2Offset={arrowOffset * 6}
+          />
+        )}
+        {loserTo && (
+          <Xarrow
+            start={`match-${match.MatchNumber}`}
+            end={loserTo}
+            endAnchor="left"
+            startAnchor="right"
+            color="#475569"
+            curveness={0.5}
+            path="grid"
+            _cpx1Offset={arrowOffset * 6}
+            _cpx2Offset={arrowOffset * 6}
+          />
+        )}
       </div>
     </div>
   )

@@ -19,10 +19,10 @@ export const parsePlaceholder = (
         const team = groupData.teams[parseInt(place) - 1]
 
         return team ? (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
             <span>{message}</span>
             <span className="text-sm opacity-70">
-              {team.Team.ShortClubName}
+              currently {team.Team.ShortClubName}
             </span>
           </div>
         ) : (

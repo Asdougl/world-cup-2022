@@ -1,4 +1,5 @@
 import { Group } from '../components/Group'
+import { Loader } from '../components/Loader'
 import { useGroupStandingsQuery } from '../hooks/standings'
 
 export const GroupsView = () => {
@@ -12,7 +13,7 @@ export const GroupsView = () => {
   return (
     <div className="container mx-auto px-4 pt-8 lg:px-0">
       {isLoading ? (
-        <div>Loading...</div>
+        <Loader />
       ) : (
         <div className="flex w-full flex-col gap-8 lg:flex-row">
           <div className="flex flex-1 flex-col gap-4">

@@ -12,6 +12,7 @@ export const MatchTeam = z.object({
 
 export const PotentialMatch = z.object({
   IdMatch: z.string(),
+  IdStage: z.string(),
   GroupName: Localized.array(),
   StageName: Localized.array(),
   Date: z.string(),
@@ -22,11 +23,13 @@ export const PotentialMatch = z.object({
   PlaceHolderB: z.string(),
   MatchTime: z.string().nullable(),
   MatchStatus: z.number(),
+  MatchNumber: z.number(),
 })
 export type PotentialMatch = z.infer<typeof PotentialMatch>
 
 export const Match = z.object({
   IdMatch: z.string(),
+  IdStage: z.string(),
   GroupName: Localized.array(),
   StageName: Localized.array(),
   Date: z.string(),
@@ -37,6 +40,7 @@ export const Match = z.object({
   PlaceHolderB: z.string(),
   MatchTime: z.string().nullable(),
   MatchStatus: z.number(),
+  MatchNumber: z.number(),
 })
 export type Match = z.infer<typeof Match>
 
