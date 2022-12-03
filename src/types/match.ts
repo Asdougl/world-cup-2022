@@ -1,6 +1,19 @@
 import { z } from 'zod'
 import { Localized } from './misc'
 
+export enum MatchStatus {
+  FINISHED = 0,
+  UPCOMING = 1,
+  LIVE = 2,
+  POSTPONED = 3,
+  CANCELED = 4,
+  SUSPENDED = 5,
+  INTERRUPTED = 6,
+  ABANDONED = 7,
+  AWARDED = 8,
+  UNKNOWN = 9,
+}
+
 export const MatchTeam = z.object({
   IdTeam: z.string(),
   Score: z.number().nullable(),
@@ -9,6 +22,7 @@ export const MatchTeam = z.object({
   Abbreviation: z.string(),
   ShortClubName: z.string(),
 })
+export type MatchTeam = z.infer<typeof MatchTeam>
 
 export const PotentialMatch = z.object({
   IdMatch: z.string(),

@@ -13,12 +13,13 @@ import { minutes } from '../../util/time'
 import { Group } from '../../components/Group'
 import { MatchCard } from '../../components/MatchCard'
 import { router } from '../../router'
+import { PageContainer } from '../../layout/PageLayout'
 import { groupsIndexRoute } from '.'
 
 export const OneGroupView = () => {
   const { params } = useMatch(idGroupRoute.id)
 
-  const { data: standings, isLoading: loadingStandings } = useQuery(
+  const { data: standings } = useQuery(
     [STANDINGS_QUERY_KEY, params.idGroup],
     () => fetchStandingsForOneGroup(params.idGroup),
     {
@@ -27,7 +28,7 @@ export const OneGroupView = () => {
     }
   )
 
-  const { data: matches, isLoading: loadingMatches } = useQuery(
+  const { data: matches } = useQuery(
     [MATCHES_QUERY_KEY, params.idGroup],
     () => fetchMatchesForGroup(params.idGroup),
     {
@@ -36,33 +37,31 @@ export const OneGroupView = () => {
     }
   )
 
-  const anyLoading = loadingStandings || loadingMatches
+  if (!standings || !matches) {
+    return <Loader />
+  }
 
   return (
-    <div className="container mx-auto px-4 pt-8 lg:px-0">
-      {anyLoading ? (
-        <Loader />
-      ) : (
-        <div className="flex flex-col gap-4">
-          <router.Link
-            to="/groups"
-            className="text-sm opacity-70 hover:underline hover:opacity-80"
-          >
-            <FontAwesomeIcon icon={faArrowLeft} /> Back
-          </router.Link>
-          <h1 className="text-2xl font-bold">{standings?.Name}</h1>
-          <div className="grid gap-4 lg:grid-cols-2">
-            <div>{standings && <Group group={standings} />}</div>
-            <div className="flex flex-col gap-4">
-              {matches &&
-                matches.map((match) => (
-                  <MatchCard key={match.IdMatch} match={match} />
-                ))}
-            </div>
+    <PageContainer>
+      <div className="flex flex-col gap-4">
+        <router.Link
+          to="/groups"
+          className="text-sm opacity-70 hover:underline hover:opacity-80"
+        >
+          <FontAwesomeIcon icon={faArrowLeft} /> Back
+        </router.Link>
+        <h1 className="text-2xl font-bold">{standings?.Name}</h1>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div>{standings && <Group group={standings} />}</div>
+          <div className="flex flex-col gap-4">
+            {matches &&
+              matches.map((match) => (
+                <MatchCard key={match.IdMatch} match={match} />
+              ))}
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </PageContainer>
   )
 }
 

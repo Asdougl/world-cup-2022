@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { Loader } from '../components/Loader'
 import { MatchCard } from '../components/MatchCard'
 import { useAllMatchesQuery } from '../hooks/matches'
+import { PageContainer } from '../layout/PageLayout'
 import type { PotentialMatch } from '../types/match'
 
 const HomeView = () => {
@@ -34,43 +35,41 @@ const HomeView = () => {
     return { recent, upcoming, ongoing }
   }, [data])
 
-  return (
-    <div className="container mx-auto px-4 pt-8 lg:px-0">
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <div className="flex flex-col gap-8">
-          {ongoing.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <h2 className="text-2xl font-bold">Ongoing</h2>
-              <div className="flex flex-col gap-4">
-                {ongoing.map((match) => (
-                  <MatchCard key={match.IdMatch} match={match} />
-                ))}
-              </div>
-            </div>
-          )}
+  if (isLoading) return <Loader />
 
+  return (
+    <PageContainer>
+      <div className="flex flex-col gap-8">
+        {ongoing.length > 0 && (
           <div className="flex flex-col gap-4">
-            <h2 className="text-2xl font-bold">Upcoming matches</h2>
-            <div className="grid gap-4 lg:grid-cols-2">
-              {upcoming.map((match) => (
+            <h2 className="text-2xl font-bold">Ongoing</h2>
+            <div className="flex flex-col gap-4">
+              {ongoing.map((match) => (
                 <MatchCard key={match.IdMatch} match={match} />
               ))}
             </div>
           </div>
+        )}
 
-          <div className="flex flex-col gap-4">
-            <h2 className="text-2xl font-bold">Recent matches</h2>
-            <div className="grid gap-4 lg:grid-cols-2">
-              {recent.map((match) => (
-                <MatchCard key={match.IdMatch} match={match} />
-              ))}
-            </div>
+        <div className="flex flex-col gap-4">
+          <h2 className="text-2xl font-bold">Upcoming matches</h2>
+          <div className="grid gap-4 lg:grid-cols-2">
+            {upcoming.map((match) => (
+              <MatchCard key={match.IdMatch} match={match} />
+            ))}
           </div>
         </div>
-      )}
-    </div>
+
+        <div className="flex flex-col gap-4">
+          <h2 className="text-2xl font-bold">Recent matches</h2>
+          <div className="grid gap-4 lg:grid-cols-2">
+            {recent.map((match) => (
+              <MatchCard key={match.IdMatch} match={match} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </PageContainer>
   )
 }
 

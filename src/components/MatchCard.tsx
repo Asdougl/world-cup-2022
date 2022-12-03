@@ -2,13 +2,16 @@ import classNames from 'classnames'
 import dayjs from 'dayjs'
 import type { FC } from 'react'
 import type { PotentialMatch } from '../types/match'
+import { MatchStatus } from '../types/match'
 import { parsePlaceholder } from '../util/knockout'
 import { pictureUrl } from '../util/picture'
 import { timeSince } from '../util/time'
+import { router } from '../router'
+import { idMatchRoute } from '../views/matches/$idMatch'
 
-type MatchStatus = 'upcoming' | 'live' | 'finished'
+type MatchStatusText = 'upcoming' | 'live' | 'finished'
 
-const matchStatus = (match: PotentialMatch): MatchStatus => {
+const matchStatus = (match: PotentialMatch): MatchStatusText => {
   if (match.MatchStatus === 0) {
     return 'finished'
   }
@@ -19,29 +22,35 @@ const matchStatus = (match: PotentialMatch): MatchStatus => {
 }
 
 const matchStatusText = (match: PotentialMatch) => {
-  if (match.MatchStatus === 0) {
+  if (match.MatchStatus === MatchStatus.FINISHED) {
     if (match.Winner) {
       return match.Home?.IdTeam === match.Winner
         ? `${match.Home?.Abbreviation} Victory`
-        : `${match.Home?.Abbreviation} Victory`
+        : `${match.Away?.Abbreviation} Victory`
     } else {
       return 'Draw'
     }
   }
-  if (match.MatchStatus === 1) {
+  if (match.MatchStatus === MatchStatus.UPCOMING) {
     return timeSince(new Date(match.Date))
   }
-  if (match.MatchStatus === 2) {
+  if (match.MatchTime) {
     return match.MatchTime
   }
+  return ''
 }
 
 export const MatchCard: FC<{ match: PotentialMatch }> = ({ match }) => {
   const status = matchStatus(match)
   return (
-    <div
+    <router.Link
+      to={idMatchRoute.id}
+      params={{
+        idMatch: match.IdMatch,
+        idStage: match.IdStage,
+      }}
       className={classNames(
-        'flex w-full flex-col gap-2 rounded-lg border-2 px-5 py-3',
+        'flex w-full flex-col gap-2 rounded-lg border-2 px-5 py-3 hover:border-slate-300 hover:bg-white/5',
         {
           'border-slate-600': status === 'upcoming',
           'border-slate-800': status === 'finished',
@@ -108,6 +117,6 @@ export const MatchCard: FC<{ match: PotentialMatch }> = ({ match }) => {
           </div>
         </div>
       </div>
-    </div>
+    </router.Link>
   )
 }
