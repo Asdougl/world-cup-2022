@@ -25,8 +25,8 @@ const matchStatusText = (match: PotentialMatch) => {
   if (match.MatchStatus === MatchStatus.FINISHED) {
     if (match.Winner) {
       return match.Home?.IdTeam === match.Winner
-        ? `${match.Home?.Abbreviation} Victory`
-        : `${match.Away?.Abbreviation} Victory`
+        ? `${match.Home?.Abbreviation} won`
+        : `${match.Away?.Abbreviation} won`
     } else {
       return 'Draw'
     }

@@ -7,6 +7,8 @@ export const fetchMatchByStageMatch = async (
   matchId: string
 ) => {
   try {
+    console.log('hi')
+
     const data = await fetch(
       `${BASE_URL}/live/football/${COMPETITION_ID}/${SEASON_ID}/${stageId}/${matchId}`
     )

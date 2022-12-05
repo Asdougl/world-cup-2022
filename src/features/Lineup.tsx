@@ -1,3 +1,5 @@
+import { faPeopleGroup } from '@fortawesome/pro-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import type { FC } from 'react'
 import type { FullMatch } from '../types/fullMatch'
 
@@ -13,9 +15,26 @@ export const LineUp: FC<{ match: FullMatch }> = ({ match }) => {
     return player.Status === 1
   })
 
+  if (!homeStarters.length || !awayStarters.length) {
+    return (
+      <div className="relative w-full gap-4 py-12 text-center text-lg opacity-70">
+        <FontAwesomeIcon
+          icon={faPeopleGroup}
+          size="4x"
+          className="text-slate-500"
+        />
+        <p>Lineups will be</p>
+        <p>posted before the match</p>
+      </div>
+    )
+  }
+
   return (
     <div>
-      <div className="flex w-full justify-center">
+      <div className="flex w-full flex-col items-center justify-center">
+        <div className="w-[512px] bg-green-700 py-6 text-center text-xl">
+          <div className="opacity-80">{match.HomeTeam.ShortClubName}</div>
+        </div>
         <div
           className="relative grid w-[512px] grid-rows-2 gap-8 border-2 border-white/60 bg-green-500 p-8"
           style={{ aspectRatio: '1 / 1.54' }}
@@ -123,6 +142,9 @@ export const LineUp: FC<{ match: FullMatch }> = ({ match }) => {
               </div>
             ))}
           </div>
+        </div>
+        <div className="w-[512px] bg-green-700 py-6 text-center text-xl">
+          <div className="opacity-80">{match.AwayTeam.ShortClubName}</div>
         </div>
       </div>
     </div>

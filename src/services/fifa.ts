@@ -1,5 +1,5 @@
 import type { Group } from '../types/group'
-import { Match, MatchResponse } from '../types/match'
+import { Match, MatchResponse, PotentialMatch } from '../types/match'
 import { StandingReply } from '../types/team'
 import {
   COMPETITION_ID,
@@ -102,6 +102,17 @@ export const fetchStandingsForOneGroup = async (
       Name: Results[0]?.Group[0]?.Description || '',
       teams: Results,
     }
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
+export const fetchOneMatch = async (idMatch: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/calendar/${idMatch}`)
+
+    return PotentialMatch.parse(await response.json())
   } catch (error) {
     console.error(error)
     return null

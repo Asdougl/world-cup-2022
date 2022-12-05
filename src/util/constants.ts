@@ -14,3 +14,4 @@ export const STAGE_ROUND_OF_16_ID = 285073
 export const STANDINGS_QUERY_KEY = 'standings'
 export const MATCHES_QUERY_KEY = 'matches'
 export const TIMELINE_QUERY_KEY = 'timelines'
+export const WATCH_QUERY_KEY = 'watch'

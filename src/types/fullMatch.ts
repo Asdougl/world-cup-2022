@@ -66,14 +66,19 @@ export const FullMatch = z.object({
   Attendance: z.string().nullable(),
   Date: z.string(),
   LocalDate: z.string(),
+  MatchStatus: z.number(),
   MatchTime: z.string(),
   Winner: z.string().nullable(),
   Period: z.number(),
   HomeTeam: FullMatchTeam,
   AwayTeam: FullMatchTeam,
   BallPossession: z.object({
-    OverallHome: z.number(),
-    OverallAway: z.number(),
+    OverallHome: z.number().nullable(),
+    OverallAway: z.number().nullable(),
   }),
 })
 export type FullMatch = z.infer<typeof FullMatch>
+
+export const FullMatchResponse = z.object({
+  Results: FullMatch.array(),
+})

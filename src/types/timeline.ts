@@ -29,6 +29,11 @@ export enum EventType {
   VAR = 71,
 }
 
+export const isBooking = (type: EventType) =>
+  type === EventType.YELLOW ||
+  type === EventType.STRAIGHT_RED ||
+  type === EventType.SECOND_YELLOW
+
 export const TimelineEvent = z.object({
   EventId: z.string(),
   IdTeam: z.string().optional(),

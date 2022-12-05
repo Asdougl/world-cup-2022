@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { Stadium } from './fullMatch'
 import { Localized } from './misc'
 
 export enum MatchStatus {
@@ -21,6 +22,7 @@ export const MatchTeam = z.object({
   IdCountry: z.string(),
   Abbreviation: z.string(),
   ShortClubName: z.string(),
+  TeamName: Localized.array(),
 })
 export type MatchTeam = z.infer<typeof MatchTeam>
 
@@ -39,24 +41,13 @@ export const PotentialMatch = z.object({
   MatchStatus: z.number(),
   MatchNumber: z.number(),
   Winner: z.string().nullable(),
+  Stadium: Stadium,
 })
 export type PotentialMatch = z.infer<typeof PotentialMatch>
 
-export const Match = z.object({
-  IdMatch: z.string(),
-  IdStage: z.string(),
-  GroupName: Localized.array(),
-  StageName: Localized.array(),
-  Date: z.string(),
-  LocalDate: z.string(),
+export const Match = PotentialMatch.extend({
   Home: MatchTeam,
   Away: MatchTeam,
-  PlaceHolderA: z.string(),
-  PlaceHolderB: z.string(),
-  MatchTime: z.string().nullable(),
-  MatchStatus: z.number(),
-  MatchNumber: z.number(),
-  Winner: z.string(),
 })
 export type Match = z.infer<typeof Match>
 

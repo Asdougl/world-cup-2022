@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMatch } from '@tanstack/react-router'
 import { z } from 'zod'
 import { Tab } from '@headlessui/react'
+import dayjs from 'dayjs'
 import { fetchMatchByStageMatch } from '../../services/match'
 import { MATCHES_QUERY_KEY, TIMELINE_QUERY_KEY } from '../../util/constants'
 import { Loader } from '../../components/Loader'
@@ -11,12 +12,20 @@ import { PageContainer } from '../../layout/PageLayout'
 import { timeSince } from '../../util/time'
 import { outcome } from '../../util/match'
 import { LineUp } from '../../features/Lineup'
+import { Timeline } from '../../features/Timeline'
+import { Summary } from '../../features/Summary'
+import { MatchStatus } from '../../types/match'
+import { fetchOneMatch } from '../../services/fifa'
 import { matchIndexRoute } from '.'
 
 export const IdMatchPage = () => {
   const { params } = useMatch(idMatchRoute.id)
 
-  const { data: match } = useQuery(
+  const { data: match } = useQuery([MATCHES_QUERY_KEY, params.idMatch], () =>
+    fetchOneMatch(params.idMatch)
+  )
+
+  const { data: fullMatch } = useQuery(
     [MATCHES_QUERY_KEY, params.idStage, params.idMatch],
     () => fetchMatchByStageMatch(params.idStage, params.idMatch)
   )
@@ -33,94 +42,130 @@ export const IdMatchPage = () => {
     }
   )
 
-  if (match === null)
-    return (
-      <PageContainer>match not started yet, check back later</PageContainer>
-    )
-
   if (!match || !timeline) return <Loader />
 
   return (
     <PageContainer>
+      <div className="flex justify-center pb-6 opacity-60">
+        {match.MatchStatus === MatchStatus.UPCOMING
+          ? dayjs(match.Date).format('MMM D, YYYY - h:mma')
+          : match.MatchStatus === MatchStatus.FINISHED
+          ? 'Full-time'
+          : match.MatchTime}
+      </div>
       <div className="grid grid-cols-5 pb-8 lg:px-16">
         <div className="flex flex-col items-center gap-1">
-          <img
-            className="h-8 rounded-sm"
-            src={pictureUrl(match.HomeTeam.PictureUrl, 4)}
-            alt=""
-          />
-          <h2 className="text-xl">{match.HomeTeam.ShortClubName}</h2>
-          <div className="opacity-60">{match.HomeTeam.Abbreviation}</div>
+          {match.Home ? (
+            <>
+              <img
+                className="h-8 rounded-sm"
+                src={pictureUrl(match.Home?.PictureUrl, 4)}
+                alt={match.Home.Abbreviation}
+              />
+              <h2 className="hidden text-xl lg:block">
+                {match.Home.ShortClubName}
+              </h2>
+              <div className="opacity-60">{match.Home.Abbreviation}</div>
+            </>
+          ) : (
+            <>
+              <div className="h-8 w-12 rounded-sm bg-slate-600" />
+              <h2 className="text-xl">{match.PlaceHolderA}</h2>
+            </>
+          )}
         </div>
         <div className="flex items-center justify-center text-4xl">
-          {match.HomeTeam.Score}
+          {match.Home ? match.Home.Score : ''}
         </div>
         <div className="flex items-center justify-center text-4xl font-bold opacity-60">
           -
         </div>
         <div className="flex items-center justify-center text-4xl">
-          {match.AwayTeam.Score}
+          {match.Away ? match.Away.Score : ''}
         </div>
         <div className="flex flex-col items-center gap-1">
-          <img
-            className="h-8 rounded-sm"
-            src={pictureUrl(match.AwayTeam.PictureUrl, 4)}
-            alt=""
-          />
-          <h2 className="text-xl">{match.AwayTeam.ShortClubName}</h2>
-          <div className="opacity-60">{match.AwayTeam.Abbreviation}</div>
+          {match.Away ? (
+            <>
+              <img
+                className="h-8 rounded-sm"
+                src={pictureUrl(match.Away?.PictureUrl, 4)}
+                alt={match.Away.Abbreviation}
+              />
+              <h2 className="hidden text-xl lg:block">
+                {match.Away.ShortClubName}
+              </h2>
+              <div className="opacity-60">{match.Away.Abbreviation}</div>
+            </>
+          ) : (
+            <>
+              <div className="h-8 w-12 rounded-sm bg-slate-600" />
+              <h2 className="text-xl">{match.PlaceHolderB}</h2>
+            </>
+          )}
         </div>
       </div>
-      <div className="flex justify-center gap-4 pb-6">
-        <div>{timeSince(new Date(match.Date))}</div>
-        <div>&bull;</div>
-        <div>{outcome(match.HomeTeam, match.AwayTeam)}</div>
+      <div className="flex flex-col items-center gap-2 pb-6">
+        <span className="text-lg">
+          {match.MatchStatus !== MatchStatus.UPCOMING && fullMatch
+            ? outcome(fullMatch.HomeTeam, fullMatch.AwayTeam)
+            : timeSince(new Date(match.Date))}
+        </span>
+        <span className="opacity-60">{match.StageName[0]?.Description}</span>
+        <span className="opacity-60">
+          {match.Stadium.Name[0]?.Description},{' '}
+          {match.Stadium.CityName[0]?.Description} {match.Stadium.IdCountry}
+        </span>
       </div>
-      <Tab.Group>
-        <Tab.List className="flex justify-center gap-4">
-          <Tab
-            className={({ selected }) =>
-              `text-lg font-bold ${
-                selected ? 'text-slate-300' : 'text-slate-500'
-              }`
-            }
-          >
-            Timeline
-          </Tab>
-          <Tab
-            className={({ selected }) =>
-              `text-lg font-bold ${
-                selected ? 'text-slate-300' : 'text-slate-500'
-              }`
-            }
-          >
-            Lineup
-          </Tab>
-        </Tab.List>
-        <Tab.Panels className="py-6">
-          <Tab.Panel>
-            <ul className="flex flex-col gap-2">
-              {timeline.map((event) => (
-                <li
-                  key={event.EventId}
-                  className="flex gap-4 rounded border border-slate-600 px-4 py-2"
-                >
-                  <div className="text-right opacity-70">
-                    {event.MatchMinute}
-                  </div>
-                  <div>
-                    {event.EventDescription[0]?.Description ||
-                      event.TypeLocalized[0]?.Description}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Tab.Panel>
-          <Tab.Panel>
-            <LineUp match={match} />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+      {fullMatch && (
+        <Tab.Group>
+          <div className="flex justify-center">
+            <Tab.List className="mt-10 grid grid-cols-3 gap-4">
+              <Tab
+                className={({ selected }) =>
+                  `text-lg font-bold ${
+                    selected ? 'text-slate-300 underline' : 'text-slate-500'
+                  } px-6 py-2 focus:bg-slate-800 focus:outline-none`
+                }
+              >
+                Summary
+              </Tab>
+              <Tab
+                className={({ selected }) =>
+                  `text-lg font-bold ${
+                    selected ? 'text-slate-300 underline' : 'text-slate-500'
+                  } px-6 py-2 focus:bg-slate-800 focus:outline-none`
+                }
+              >
+                Timeline
+              </Tab>
+              <Tab
+                className={({ selected }) =>
+                  `text-lg font-bold ${
+                    selected ? 'text-slate-300 underline' : 'text-slate-500'
+                  } px-6 py-2 focus:bg-slate-800 focus:outline-none`
+                }
+              >
+                Lineup
+              </Tab>
+            </Tab.List>
+          </div>
+          <Tab.Panels className="py-6">
+            <Tab.Panel>
+              <Summary
+                events={timeline}
+                home={fullMatch.HomeTeam}
+                away={fullMatch.AwayTeam}
+              />
+            </Tab.Panel>
+            <Tab.Panel>
+              <Timeline events={timeline} />
+            </Tab.Panel>
+            <Tab.Panel>
+              <LineUp match={fullMatch} />
+            </Tab.Panel>
+          </Tab.Panels>
+        </Tab.Group>
+      )}
     </PageContainer>
   )
 }

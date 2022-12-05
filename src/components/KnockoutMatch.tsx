@@ -4,6 +4,7 @@ import type { Group } from '../types/group'
 import type { PotentialMatch } from '../types/match'
 import { parsePlaceholder } from '../util/knockout'
 import { pictureUrl } from '../util/picture'
+import { router } from '../router'
 
 interface KnockoutMatchProps {
   match: PotentialMatch
@@ -25,11 +26,13 @@ export const KnockoutMatch = ({
       <div className="flex flex-col items-start px-2 lg:flex-row lg:items-center lg:gap-3">
         <span>Game {match.MatchNumber}</span>
         <span className="text-sm opacity-70">
-          {dayjs(match.Date).format('dddd, MMM D [at] HH:mm')}
+          {dayjs(match.Date).format('dddd, MMM D [at] h:mma')}
         </span>
       </div>
-      <div
-        className="flex flex-col gap-4 rounded-lg border border-slate-600 py-2"
+      <router.Link
+        to="/matches/$idStage/$idMatch"
+        params={{ idStage: match.IdStage, idMatch: match.IdMatch }}
+        className="flex flex-col gap-4 rounded-lg border border-slate-600 py-2 hover:bg-white/5"
         id={`match-${match.MatchNumber}`}
       >
         <div
@@ -43,7 +46,15 @@ export const KnockoutMatch = ({
                 alt={match.Home.Abbreviation}
                 className="h-4 rounded-sm"
               />
-              <div className="ml-2 flex-1">{match.Home.ShortClubName}</div>
+              <div className="ml-2 flex-1">
+                <span className="hidden lg:inline">
+                  {match.Home.TeamName[0]?.Description}
+                </span>
+                <span className="lg:hidden">{match.Home.ShortClubName}</span>{' '}
+                <span className="text-xs opacity-60">
+                  {match.Home.Abbreviation}
+                </span>
+              </div>
             </>
           ) : (
             <>
@@ -54,7 +65,7 @@ export const KnockoutMatch = ({
             </>
           )}
           <div className="text-right">
-            {match.Away ? match.Away.Score ?? '-' : '-'}
+            {match.Home ? match.Home.Score ?? '-' : '-'}
           </div>
         </div>
         <div
@@ -68,7 +79,15 @@ export const KnockoutMatch = ({
                 alt={match.Away.Abbreviation}
                 className="h-4 rounded-sm"
               />
-              <div className="ml-2 flex-1">{match.Away.ShortClubName}</div>
+              <div className="ml-2 flex-1">
+                <span className="hidden lg:inline">
+                  {match.Away.TeamName[0]?.Description}
+                </span>
+                <span className="lg:hidden">{match.Away.ShortClubName}</span>{' '}
+                <span className="text-xs opacity-60">
+                  {match.Away.Abbreviation}
+                </span>
+              </div>
             </>
           ) : (
             <>
@@ -108,7 +127,7 @@ export const KnockoutMatch = ({
             _cpx2Offset={arrowOffset * 6}
           />
         )}
-      </div>
+      </router.Link>
     </div>
   )
 }
