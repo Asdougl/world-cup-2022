@@ -26,7 +26,7 @@ const SummaryEntry: FC<{
     {icon && (
       <FontAwesomeIcon
         icon={icon}
-        className={classNames('mr-2', {
+        className={classNames('px-2', {
           'text-yellow-500': type === EventType.YELLOW,
           'text-red-500':
             type === EventType.STRAIGHT_RED || type === EventType.SECOND_YELLOW,
