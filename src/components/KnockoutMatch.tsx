@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import Xarrow from 'react-xarrows'
+import classNames from 'classnames'
 import type { Group } from '../types/group'
 import type { PotentialMatch } from '../types/match'
 import { parsePlaceholder } from '../util/knockout'
@@ -47,10 +48,20 @@ export const KnockoutMatch = ({
                 className="h-4 rounded-sm"
               />
               <div className="ml-2 flex-1">
-                <span className="hidden lg:inline">
+                <span
+                  className={classNames('hidden lg:inline', {
+                    'font-bold': match.Winner === match.Home.IdTeam,
+                  })}
+                >
                   {match.Home.TeamName[0]?.Description}
                 </span>
-                <span className="lg:hidden">{match.Home.ShortClubName}</span>{' '}
+                <span
+                  className={classNames('lg:hidden', {
+                    'font-bold': match.Winner === match.Home.IdTeam,
+                  })}
+                >
+                  {match.Home.ShortClubName}
+                </span>{' '}
                 <span className="text-xs opacity-60">
                   {match.Home.Abbreviation}
                 </span>
@@ -66,6 +77,11 @@ export const KnockoutMatch = ({
           )}
           <div className="text-right">
             {match.Home ? match.Home.Score ?? '-' : '-'}
+            {match.ResultType === 2 && (
+              <span className="pl-1 text-sm opacity-70">
+                ({match.HomeTeamPenaltyScore ?? '-'})
+              </span>
+            )}
           </div>
         </div>
         <div
@@ -99,6 +115,11 @@ export const KnockoutMatch = ({
           )}
           <div className="text-right">
             {match.Away ? match.Away.Score ?? '-' : '-'}
+            {match.ResultType === 2 && (
+              <span className="pl-1 text-sm opacity-70">
+                ({match.AwayTeamPenaltyScore ?? '-'})
+              </span>
+            )}
           </div>
         </div>
         {winnerTo && (

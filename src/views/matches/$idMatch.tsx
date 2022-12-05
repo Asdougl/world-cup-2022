@@ -4,12 +4,16 @@ import { z } from 'zod'
 import { Tab } from '@headlessui/react'
 import dayjs from 'dayjs'
 import { fetchMatchByStageMatch } from '../../services/match'
-import { MATCHES_QUERY_KEY, TIMELINE_QUERY_KEY } from '../../util/constants'
+import {
+  FULL_MATCH_QUERY_KEY,
+  MATCHES_QUERY_KEY,
+  TIMELINE_QUERY_KEY,
+} from '../../util/constants'
 import { Loader } from '../../components/Loader'
 import { fetchTimeline } from '../../services/timeline'
 import { pictureUrl } from '../../util/picture'
 import { PageContainer } from '../../layout/PageLayout'
-import { timeSince } from '../../util/time'
+import { seconds, timeSince } from '../../util/time'
 import { outcome } from '../../util/match'
 import { LineUp } from '../../features/Lineup'
 import { Timeline } from '../../features/Timeline'
@@ -21,13 +25,22 @@ import { matchIndexRoute } from '.'
 export const IdMatchPage = () => {
   const { params } = useMatch(idMatchRoute.id)
 
-  const { data: match } = useQuery([MATCHES_QUERY_KEY, params.idMatch], () =>
-    fetchOneMatch(params.idMatch)
+  const { data: match } = useQuery(
+    [MATCHES_QUERY_KEY, params.idMatch],
+    () => fetchOneMatch(params.idMatch),
+    {
+      staleTime: seconds(15),
+      refetchInterval: seconds(30),
+    }
   )
 
   const { data: fullMatch } = useQuery(
-    [MATCHES_QUERY_KEY, params.idStage, params.idMatch],
-    () => fetchMatchByStageMatch(params.idStage, params.idMatch)
+    [FULL_MATCH_QUERY_KEY, params.idStage, params.idMatch],
+    () => fetchMatchByStageMatch(params.idStage, params.idMatch),
+    {
+      staleTime: seconds(15),
+      refetchInterval: seconds(30),
+    }
   )
 
   const { data: timeline } = useQuery(
@@ -39,6 +52,10 @@ export const IdMatchPage = () => {
           (event) => event.EventDescription.length
         ).reverse() || []
       )
+    },
+    {
+      staleTime: seconds(15),
+      refetchInterval: seconds(30),
     }
   )
 
@@ -46,12 +63,20 @@ export const IdMatchPage = () => {
 
   return (
     <PageContainer>
-      <div className="flex justify-center pb-6 opacity-60">
-        {match.MatchStatus === MatchStatus.UPCOMING
-          ? dayjs(match.Date).format('MMM D, YYYY - h:mma')
-          : match.MatchStatus === MatchStatus.FINISHED
-          ? 'Full-time'
-          : match.MatchTime}
+      <div className="flex items-center justify-center pb-6">
+        {match.MatchStatus === MatchStatus.UPCOMING ? (
+          dayjs(match.Date).format('MMM D, YYYY - h:mma')
+        ) : match.MatchStatus === MatchStatus.FINISHED ? (
+          'Full-time'
+        ) : fullMatch ? (
+          <>
+            <div className="relative mx-2 h-2 w-2 rounded-full bg-red-500">
+              <div className="absolute h-2 w-2 animate-ping rounded-full bg-red-500"></div>
+            </div>
+            <div className="pr-4 text-xs text-red-500">Live</div>
+            <div>{fullMatch.MatchTime}</div>
+          </>
+        ) : null}
       </div>
       <div className="grid grid-cols-5 pb-8 lg:px-16">
         <div className="flex flex-col items-center gap-1">
@@ -106,10 +131,16 @@ export const IdMatchPage = () => {
       </div>
       <div className="flex flex-col items-center gap-2 pb-6">
         <span className="text-lg">
-          {match.MatchStatus !== MatchStatus.UPCOMING && fullMatch
-            ? outcome(fullMatch.HomeTeam, fullMatch.AwayTeam)
+          {match.MatchStatus === MatchStatus.FINISHED && fullMatch
+            ? outcome(match.Winner, fullMatch.HomeTeam, fullMatch.AwayTeam)
             : timeSince(new Date(match.Date))}
         </span>
+        {match.ResultType === 2 && (
+          <span className="">
+            {match.AwayTeamPenaltyScore} - {match.HomeTeamPenaltyScore} on
+            penalties
+          </span>
+        )}
         <span className="opacity-60">{match.StageName[0]?.Description}</span>
         <span className="opacity-60">
           {match.Stadium.Name[0]?.Description},{' '}

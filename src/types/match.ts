@@ -5,8 +5,8 @@ import { Localized } from './misc'
 export enum MatchStatus {
   FINISHED = 0,
   UPCOMING = 1,
-  LIVE = 2,
-  POSTPONED = 3,
+  PENALTIES = 2,
+  LIVE = 3,
   CANCELED = 4,
   SUSPENDED = 5,
   INTERRUPTED = 6,
@@ -34,7 +34,11 @@ export const PotentialMatch = z.object({
   Date: z.string(),
   LocalDate: z.string(),
   Home: MatchTeam.nullable(),
+  HomeTeamScore: z.number().nullable(),
+  HomeTeamPenaltyScore: z.number().nullable(),
   Away: MatchTeam.nullable(),
+  AwayTeamScore: z.number().nullable(),
+  AwayTeamPenaltyScore: z.number().nullable(),
   PlaceHolderA: z.string(),
   PlaceHolderB: z.string(),
   MatchTime: z.string().nullable(),
@@ -42,6 +46,7 @@ export const PotentialMatch = z.object({
   MatchNumber: z.number(),
   Winner: z.string().nullable(),
   Stadium: Stadium,
+  ResultType: z.number(),
 })
 export type PotentialMatch = z.infer<typeof PotentialMatch>
 

@@ -32,11 +32,11 @@ export const LineUp: FC<{ match: FullMatch }> = ({ match }) => {
   return (
     <div>
       <div className="flex w-full flex-col items-center justify-center">
-        <div className="w-[512px] bg-green-700 py-6 text-center text-xl">
+        <div className="w-full max-w-[512px] bg-green-700 py-6 text-center text-xl">
           <div className="opacity-80">{match.HomeTeam.ShortClubName}</div>
         </div>
         <div
-          className="relative grid w-[512px] grid-rows-2 gap-8 border-2 border-white/60 bg-green-500 p-8"
+          className="relative grid w-full max-w-[512px] grid-rows-2 gap-8 border-2 border-white/60 bg-green-500 p-8"
           style={{ aspectRatio: '1 / 1.54' }}
         >
           <div className="absolute top-1/2 left-0 w-full border-t-2 border-white/60"></div>
@@ -143,7 +143,7 @@ export const LineUp: FC<{ match: FullMatch }> = ({ match }) => {
             ))}
           </div>
         </div>
-        <div className="w-[512px] bg-green-700 py-6 text-center text-xl">
+        <div className="w-full max-w-[512px] bg-green-700 py-6 text-center text-xl">
           <div className="opacity-80">{match.AwayTeam.ShortClubName}</div>
         </div>
       </div>

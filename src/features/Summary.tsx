@@ -8,6 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import type { CSSProperties, FC } from 'react'
 import classNames from 'classnames'
+import { useMemo } from 'react'
 import type { FullMatchTeam } from '../types/fullMatch'
 import type { TimelineEvent } from '../types/timeline'
 import { EventType } from '../types/timeline'
@@ -63,76 +64,82 @@ interface SummaryProps {
 }
 
 export const Summary = ({ events, home, away }: SummaryProps) => {
-  const allPlayers = [...home.Players, ...away.Players]
+  console.log(events.length)
 
-  const homeEvents: JSX.Element[] = []
-  const awayEvents: JSX.Element[] = []
-  events.forEach((event) => {
-    if (
-      event.Type === EventType.GOAL ||
-      event.Type === EventType.CONVERTED_PENALTY ||
-      event.Type === EventType.OWN_GOAL
-    ) {
-      const player = allPlayers.find(
-        (player) => player.IdPlayer === event.IdPlayer
-      )
+  const [homeEvents, awayEvents] = useMemo(() => {
+    const allPlayers = [...home.Players, ...away.Players]
 
-      const homeTeam = event.IdTeam === home.IdTeam
+    const homeEvents: JSX.Element[] = []
+    const awayEvents: JSX.Element[] = []
+    events.forEach((event) => {
+      if (
+        event.Type === EventType.GOAL ||
+        event.Type === EventType.CONVERTED_PENALTY ||
+        event.Type === EventType.OWN_GOAL
+      ) {
+        const player = allPlayers.find(
+          (player) => player.IdPlayer === event.IdPlayer
+        )
 
-      const entry = (
-        <SummaryEntry
-          team={homeTeam ? 'home' : 'away'}
-          key={event.EventId}
-          icon={faFutbolBall}
-          title={`${
-            player?.PlayerName[0]?.Description ||
-            (homeTeam ? home.ShortClubName : away.ShortClubName)
-          } ${event.MatchMinute} ${
-            event.Type === EventType.OWN_GOAL ? '(OG)' : ''
-          }`}
-        />
-      )
+        const homeTeam = event.IdTeam === home.IdTeam
 
-      if (homeTeam && event.Type !== EventType.OWN_GOAL) {
-        homeEvents.push(entry)
-      } else {
-        awayEvents.push(entry)
+        const entry = (
+          <SummaryEntry
+            team={homeTeam ? 'home' : 'away'}
+            key={event.EventId}
+            icon={faFutbolBall}
+            title={`${
+              player?.PlayerName[0]?.Description ||
+              (homeTeam ? home.ShortClubName : away.ShortClubName)
+            } ${event.MatchMinute} ${
+              event.Type === EventType.OWN_GOAL ? '(OG)' : ''
+            }`}
+          />
+        )
+
+        if (homeTeam && event.Type !== EventType.OWN_GOAL) {
+          homeEvents.push(entry)
+        } else {
+          awayEvents.push(entry)
+        }
+      } else if (
+        event.Type === EventType.YELLOW ||
+        event.Type === EventType.STRAIGHT_RED ||
+        event.Type === EventType.SECOND_YELLOW
+      ) {
+        const player = allPlayers.find(
+          (player) => player.IdPlayer === event.IdPlayer
+        )
+
+        const homeTeam = event.IdTeam === home.IdTeam
+
+        const entry = (
+          <SummaryEntry
+            team={homeTeam ? 'home' : 'away'}
+            key={event.EventId}
+            icon={
+              event.Type === EventType.SECOND_YELLOW
+                ? faCardsBlank
+                : faCardDiamond
+            }
+            type={event.Type}
+            title={`${
+              player?.PlayerName[0]?.Description ||
+              (homeTeam ? home.ShortClubName : away.ShortClubName)
+            } ${event.MatchMinute}`}
+          />
+        )
+
+        if (homeTeam) {
+          homeEvents.push(entry)
+        } else {
+          awayEvents.push(entry)
+        }
       }
-    } else if (
-      event.Type === EventType.YELLOW ||
-      event.Type === EventType.STRAIGHT_RED ||
-      event.Type === EventType.SECOND_YELLOW
-    ) {
-      const player = allPlayers.find(
-        (player) => player.IdPlayer === event.IdPlayer
-      )
+    })
 
-      const homeTeam = event.IdTeam === home.IdTeam
-
-      const entry = (
-        <SummaryEntry
-          team={homeTeam ? 'home' : 'away'}
-          key={event.EventId}
-          icon={
-            event.Type === EventType.SECOND_YELLOW
-              ? faCardsBlank
-              : faCardDiamond
-          }
-          type={event.Type}
-          title={`${
-            player?.PlayerName[0]?.Description ||
-            (homeTeam ? home.ShortClubName : away.ShortClubName)
-          } ${event.MatchMinute}`}
-        />
-      )
-
-      if (homeTeam) {
-        homeEvents.push(entry)
-      } else {
-        awayEvents.push(entry)
-      }
-    }
-  })
+    return [homeEvents, awayEvents]
+  }, [events, home, away])
 
   if (homeEvents.length === 0 && awayEvents.length === 0) {
     return (

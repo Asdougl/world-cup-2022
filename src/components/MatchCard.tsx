@@ -24,9 +24,15 @@ const matchStatus = (match: PotentialMatch): MatchStatusText => {
 const matchStatusText = (match: PotentialMatch) => {
   if (match.MatchStatus === MatchStatus.FINISHED) {
     if (match.Winner) {
-      return match.Home?.IdTeam === match.Winner
-        ? `${match.Home?.Abbreviation} won`
-        : `${match.Away?.Abbreviation} won`
+      const winnerText =
+        match.Home?.IdTeam === match.Winner
+          ? `${match.Home?.Abbreviation} won`
+          : `${match.Away?.Abbreviation} won`
+
+      if (match.ResultType === 2) {
+        return `${winnerText} ${match.HomeTeamPenaltyScore} - ${match.AwayTeamPenaltyScore} pens`
+      }
+      return winnerText
     } else {
       return 'Draw'
     }
@@ -84,10 +90,11 @@ export const MatchCard: FC<{ match: PotentialMatch }> = ({ match }) => {
               <div className="h-4 w-6 rounded-sm bg-gray-600" />
             )}
           </div>
-          <div className="ml-2">
-            {match.Home
-              ? match.Home.ShortClubName
-              : parsePlaceholder(match.PlaceHolderA)}
+          <div className="ml-2 hidden text-right lg:block">
+            {match.Home?.ShortClubName || parsePlaceholder(match.PlaceHolderA)}
+          </div>
+          <div className="ml-2 text-right lg:hidden">
+            {match.Home?.Abbreviation || parsePlaceholder(match.PlaceHolderA)}
           </div>
         </div>
         <div className="flex items-center gap-1 text-center">
@@ -102,8 +109,11 @@ export const MatchCard: FC<{ match: PotentialMatch }> = ({ match }) => {
           )}
         </div>
         <div className="flex flex-1 items-center justify-end gap-1">
-          <div className="mr-2">
+          <div className="mr-2 hidden text-right lg:block">
             {match.Away?.ShortClubName || parsePlaceholder(match.PlaceHolderB)}
+          </div>
+          <div className="mr-2 text-right lg:hidden">
+            {match.Away?.Abbreviation || parsePlaceholder(match.PlaceHolderB)}
           </div>
           <div>
             {match.Away ? (

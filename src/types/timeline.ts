@@ -27,6 +27,7 @@ export enum EventType {
   CONVERTED_PENALTY = 41,
   SAVED_PENALTY = 60,
   VAR = 71,
+  SOMETHING = 129,
 }
 
 export const isBooking = (type: EventType) =>
@@ -45,8 +46,8 @@ export const TimelineEvent = z.object({
   Period: z.number(),
   HomeGoals: z.number(),
   AwayGoals: z.number(),
-  Type: z.nativeEnum(EventType),
-  // Type: z.number(),
+  // Type: z.nativeEnum(EventType),
+  Type: z.number(),
   TypeLocalized: Localized.array(),
   PositionX: z.number().optional(),
   PositionY: z.number().optional(),

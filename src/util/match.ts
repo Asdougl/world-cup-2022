@@ -1,8 +1,12 @@
 import type { MatchTeam } from '../types/match'
 
-type OutcomeTeam = Pick<MatchTeam, 'Score' | 'ShortClubName' | 'Abbreviation'>
+type OutcomeTeam = Pick<
+  MatchTeam,
+  'IdTeam' | 'Score' | 'ShortClubName' | 'Abbreviation'
+>
 
 export const outcome = (
+  winner: string | null,
   home: OutcomeTeam,
   away: OutcomeTeam,
   abbreviation?: boolean
@@ -11,9 +15,9 @@ export const outcome = (
     return 'Not played'
   }
 
-  if (home.Score > away.Score) {
+  if (winner === home.IdTeam) {
     return `${abbreviation ? home.Abbreviation : home.ShortClubName} won`
-  } else if (home.Score < away.Score) {
+  } else if (winner === away.IdTeam) {
     return `${abbreviation ? away.Abbreviation : away.ShortClubName} won`
   } else {
     return 'Draw'
